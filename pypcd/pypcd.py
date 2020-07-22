@@ -250,11 +250,11 @@ def parse_binary_compressed_pc_data(f, dtype, metadata):
     if len(buf) != uncompressed_size:
         raise Exception('Error decompressing data')
     # the data is stored field-by-field
-    pc_data = np.zeros(metadata['width'], dtype=dtype)
+    pc_data = np.zeros(metadata['points'], dtype=dtype)
     ix = 0
     for dti in range(len(dtype)):
         dt = dtype[dti]
-        bytes = dt.itemsize * metadata['width']
+        bytes = dt.itemsize * metadata['points']
         column = np.fromstring(buf[ix:(ix+bytes)], dt)
         pc_data[dtype.names[dti]] = column
         ix += bytes
@@ -486,7 +486,6 @@ def cat_point_clouds(pc1, pc2):
     new_metadata = pc1.get_metadata()
     new_data = np.concatenate((pc1.pc_data, pc2.pc_data))
     # TODO this only makes sense for unstructured pc?
-    new_metadata['width'] = pc1.width+pc2.width
     new_metadata['points'] = pc1.points+pc2.points
     pc3 = PointCloud(new_metadata, new_data)
     return pc3
